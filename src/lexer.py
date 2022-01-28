@@ -1,10 +1,31 @@
 import ply.lex as lex
+from ply.lex import TOKEN
 
 class lexer():
     
-    tokens = ['INT', 'FLOAT', 'BOOL', 'CHAR','STRUCT','VOID'  #data types
+    reserved = {
+        'auto'      : 'AUTO',
+        'int'       : 'INT',
+        'char'      : 'CHAR',
+        'float'     : 'FLOAT',
+        'bool'      : 'BOOL',
+        'struct'    : 'STRUCT',
+        'const'     : 'CONST', 
+        'for'       : 'FOR',
+        'while'     : 'WHILE',
+        'if'        : 'IF',
+        'else'      : 'ELSE',
+        'return'    : 'RETURN',
+        'void'      : 'VOID',
+        'sizeof'    : 'SIZEOF',
+        'unsigned'  : 'UNSIGNED',
+        'main'      : 'MAIN',
+        
+    }
+
+    tokens = list(reserved.values()) + [
+            'STRING',
             'ID',
-            'MAIN',
             'ADD', # "+"
             'SUB', # "-"
             'MUL', # "*"
@@ -16,8 +37,7 @@ class lexer():
             'ASSIGNMENT', #"="
             'LEFT_SHIFT', # "<<"
             'RIGHT_SHIFT', # ">>"
-            'FOR','WHILE','IF',
-            'RETURN']
+            ]
     
     # def __init__():
 
@@ -29,7 +49,8 @@ class lexer():
     exp = r'([Ee][+-]?' + num + r'+)'
     exponent = r'(' + num + r'+' + exp + r')'
     dec = r'(' + num + r'*[.]' + num + r'+' + exp + r'?)'
-    float = r'(' + exponent + r'|' + dec + r')'
+    flt = r'(' + exponent + r'|' + dec + r')'
+    nline = r'\n+'
     
     t_ADD = r'\+'
     t_SUB = r'-'
@@ -40,32 +61,55 @@ class lexer():
     t_OR  = r'\|\|'
     t_LEFT_SHIFT = r'<<'
     t_RIGHT_SHIFT = r'>>'
-    
+    t_ASSIGNMENT = r'=' 
+
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
-        t.type = 'ID'
+        if t.value in self.reserved.keys():
+            t.type = self.reserved[t.value]
+        else :
+            t.type = 'ID'
+
         return t
 
+    @TOKEN(flt)
+    def t_FLOAT(self, t):
+        t.type = 'FLOAT'
+        t.value = float(t.value)
+        return t
+    
     def t_INT(self, t):
         r'(([0-9])+)'
         t.type = 'INT'
         t.value = int(t.value)
         return t
 
-    # def t_FLOAT(self, t):
-    #     pass
-
-    # def t_STRING(self, t):
-    #     pass
+    string_regex = r'(\"(\\.|[^\\"])*\")'
+    @TOKEN(string_regex) 
+    def t_STRING(self, t):
+        return t
+        
+    @TOKEN(nline)
+    def t_NEWLINE(self, t):
+        t.lexer.lineno += len(t.value)
+        pass
     
-    # def t_NEWLINE(self, t):
-    #     pass
-      
+    def t_wspace(self, t):
+        r'[ \t]+'
+        pass
     
 lexee = lexer()
 lexee.build()
 
-data = "99+64"
+data = "99.3+64\"hehe\""
+
+sample_program = '''
+int main()
+{
+    int a = 1;
+    return 0;
+}
+'''
  
 # Give the lexer some input
 lexee.lexer.input(data)
