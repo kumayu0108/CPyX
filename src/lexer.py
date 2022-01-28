@@ -26,20 +26,26 @@ class lexer():
     tokens = list(reserved.values()) + [
             'STRING',
             'ID',
-            'ADD', # "+"
-            'SUB', # "-"
-            'MUL', # "*"
-            'DIV', # "/"
-            'XOR', # "^"
-            'AND', # "&"
-            'OR', # "|"
-            'MODULO', # "%"
-            'ASSIGNMENT', #"="
-            'LEFT_SHIFT', # "<<"
-            'RIGHT_SHIFT', # ">>"
+            'ADD',          # "+"
+            'SUB',          # "-"
+            'MUL',          # "*"
+            'DIV',          # "/"
+            'XOR',          # "^"
+            'AND',          # "&"
+            'OR',           # "|"
+            'MODULO',       # "%"
+            'ASSIGNMENT',   #"="
+            'LEFT_SHIFT',   # "<<"
+            'RIGHT_SHIFT',  # ">>"
+            'LEFT_PAR',  # "("
+            'RIGHT_PAR', # ")"
+            'LEFT_CUR_BR',  # "{"
+            'RIGHT_CUR_BR', # "}"
+            'SEMI_COLON',    # ";"
             ]
     
-    # def __init__():
+    # def __init__(self):
+    #     self.col = 0
 
     def build(self, **kwargs):
         self.lexer = lex.lex(self)
@@ -62,7 +68,12 @@ class lexer():
     t_LEFT_SHIFT = r'<<'
     t_RIGHT_SHIFT = r'>>'
     t_ASSIGNMENT = r'=' 
-
+    t_LEFT_PAR = r'\('
+    t_RIGHT_PAR = r'\)'
+    t_LEFT_CUR_BR = r'\{'
+    t_RIGHT_CUR_BR = r'\}' 
+    t_SEMI_COLON = r';'
+    
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         if t.value in self.reserved.keys():
@@ -98,25 +109,52 @@ class lexer():
         r'[ \t]+'
         pass
     
-lexee = lexer()
-lexee.build()
+    def t_error(self, t):
+        x = t.lexpos - self.lexer.lexdata.rfind('\n', 0, t.lexpos)
+        print(f"Error!!!, unknown lexeme {t.value[0]} at line no. {t.lineno}, column no. {x} ")
+        t.lexer.skip(1)
 
-data = "99.3+64\"hehe\""
+def output_token(input):
+    # Give the lexer some input
+    lexee.lexer.input(input)
 
-sample_program = '''
+    # Tokenize
+    print(f"{'token.type':>12} {'token.value':>12} {'token.lineno':>12} {'token.lexpos':>12}")
+
+    while True:
+        token = lexee.lexer.token()
+        if not token: 
+            break      # No more input
+        x = token.lexpos - input.rfind('\n', 0, token.lexpos)
+        print(f"{token.type:>12} {token.value:>12} {token.lineno:>12} {x:>12}")
+
+
+if __name__ == "__main__":
+    lexee = lexer()
+    lexee.build()
+
+    data = "99.3+64\"hehe\""
+
+    sample_program_1 = '''
 int main()
 {
     int a = 1;
     return 0;
 }
-'''
- 
-# Give the lexer some input
-lexee.lexer.input(data)
+    '''
 
-# Tokenize
-while True:
-    token = lexee.lexer.token()
-    if not token: 
-        break      # No more input
-    print(token)
+    sample_program_2 = '''
+int main()
+{
+    int a = 1;
+    if(b==1)
+    {
+        c=1;
+    }
+    else {c=3;}
+    return 0;
+    $$$$$$
+}
+    '''
+
+    output_token(sample_program_2)
