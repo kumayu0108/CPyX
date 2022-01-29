@@ -18,34 +18,81 @@ class lexer():
         'return'    : 'RETURN',
         'void'      : 'VOID',
         'sizeof'    : 'SIZEOF',
-        'unsigned'  : 'UNSIGNED',
         'main'      : 'MAIN',
-        
+        'printf'    : 'PRINTF',
+        'scanf'     : 'SCANF',
+        'malloc'    : 'MALLOC',
+        'calloc'    : 'CALLOC',
+        'free'      : 'FREE',
+        'true'      : 'TRUE',
+        'false'     : 'FALSE'
     }
 
     tokens = list(reserved.values()) + [
-            'STRING',
             'ID',
+            'INT_NUM',
+            'FLOAT_NUM',
+            'CHARACTER',
+            'STRING',
             'ADD',          # "+"
             'SUB',          # "-"
             'MUL',          # "*"
             'DIV',          # "/"
             'XOR',          # "^"
-            'AND',          # "&"
-            'OR',           # "|"
+            'BIT_AND',      # "&"
+            'BIT_OR',       # "|"
+            'AND',          # "&&"
+            'OR',           # "||" 
+
             'MODULO',       # "%"
-            'ASSIGNMENT',   #"="
+            'ASSIGNMENT',   # "="
+            'NOT',          # "~"
+            'NEGATE',       # "!"
+            'BACKSLASH',    # "\"          \\EXTRA
+            
+
             'LEFT_SHIFT',   # "<<"
             'RIGHT_SHIFT',  # ">>"
-            'LEFT_PAR',  # "("
-            'RIGHT_PAR', # ")"
+            'LEFT_PAR',     # "("
+            'RIGHT_PAR',    # ")"
             'LEFT_CUR_BR',  # "{"
             'RIGHT_CUR_BR', # "}"
-            'SEMI_COLON',    # ";"
+            'LEFT_SQ_BR',   # "["     
+            'RIGHT_SQ_BR',  # "]"     
+            'SEMI_COLON',   # ";"  
+            'COLON',        # ":" 
+            'DOT',          # "."
+            'COMMA',        # ","     
+            'PTR_OP',       # "->"    
+
+            'INC',          # "++"    
+            'DEC',          # "--"   
+            
+            #SHORTHANDS 
+            'SHORT_ADD',   # "+="
+            'SHORT_SUB',   # "-="
+            'SHORT_MUL',   # "*="
+            'SHORT_DIV',   # "/="
+            'SHORT_XOR',   # "^="
+            'SHORT_AND',   # "&="
+            'SHORT_OR',    # "|="
+            'SHORT_MOD',   # "%="
+            'SHORT_LEFT_SHIFT',    # "<<="
+            'SHORT_RIGHT_SHIFT',   # ">>="
+            
+
+
+            'NOT_EQ',       # "!="
+            'EQ_CHECK',     # "=="
+            'GEQ',          # ">="
+            'LEQ',          # "<="
+            'GREATER',      # ">"    
+            'LESS',         # "<"     
+            'TERNARY'       # "?"     //
+
             ]
     
     # def __init__(self):
-    #     self.col = 0
 
     def build(self, **kwargs):
         self.lexer = lex.lex(self)
@@ -58,43 +105,77 @@ class lexer():
     flt = r'(' + exponent + r'|' + dec + r')'
     nline = r'\n+'
     
+    t_SHORT_ADD = r'\+='
+    t_SHORT_SUB = r'-='
+    t_SHORT_MUL = r'\*='
+    t_SHORT_DIV = r'/='
+    t_SHORT_XOR = r'\^='
+    t_SHORT_AND = r'&='
+    t_SHORT_OR = r'\|='
+    t_SHORT_MOD = r'%='
+    t_SHORT_LEFT_SHIFT = r'<<='
+    t_SHORT_RIGHT_SHIFT = r'>>='
     t_ADD = r'\+'
+    t_INC = r'\+\+'
     t_SUB = r'-'
+    t_DEC = r'--'
     t_MUL = r'\*'
     t_DIV = r'/'
     t_XOR = r'\^'
     t_AND = r'&&'
     t_OR  = r'\|\|'
+    t_BIT_AND = r'&'
+    t_BIT_OR = r'\|'
     t_LEFT_SHIFT = r'<<'
     t_RIGHT_SHIFT = r'>>'
-    t_ASSIGNMENT = r'=' 
     t_LEFT_PAR = r'\('
     t_RIGHT_PAR = r'\)'
     t_LEFT_CUR_BR = r'\{'
     t_RIGHT_CUR_BR = r'\}' 
+    t_LEFT_SQ_BR = r'\['
+    t_RIGHT_SQ_BR = r'\]'
     t_SEMI_COLON = r';'
-    
+    t_NOT_EQ = r'!='
+    t_EQ_CHECK = r'=='
+    t_ASSIGNMENT = r'='
+    t_GEQ = r'>='
+    t_LEQ = r'<='
+    t_GREATER = r'>'
+    t_LESS = r'<'
+    t_COLON = r':'
+    t_DOT = r'\.'
+    t_NOT = r'~'
+    t_NEGATE = r'!'
+    t_BACKSLASH = r'\\'
+    t_COMMA = r','
+    t_PTR_OP = r'\->'
+
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         if t.value in self.reserved.keys():
             t.type = self.reserved[t.value]
         else :
             t.type = 'ID'
-
         return t
 
     @TOKEN(flt)
-    def t_FLOAT(self, t):
-        t.type = 'FLOAT'
+    def t_FLOAT_NUM(self, t):
+        t.type = 'FLOAT_NUM'
         t.value = float(t.value)
         return t
     
-    def t_INT(self, t):
+    def t_INT_NUM(self, t):
         r'(([0-9])+)'
-        t.type = 'INT'
+        t.type = 'INT_NUM'
         t.value = int(t.value)
         return t
-
+    
+    def t_CHARACTER(self, t):
+        r'\'.\''
+        t.type = 'CHARACTER'
+        t.value = t.value[0]
+        return t
+       
     string_regex = r'(\"(\\.|[^\\"])*\")'
     @TOKEN(string_regex) 
     def t_STRING(self, t):
