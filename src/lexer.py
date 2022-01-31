@@ -1,3 +1,4 @@
+import sys
 import ply.lex as lex
 from ply.lex import TOKEN
 
@@ -190,52 +191,60 @@ class lexer():
         r'[ \t]+'
         pass
     
+    def t_INLINE_COMMENT(self, t):
+        r'//.*'
+        pass
+
+    def t_BLOCK_COMMENT(self, t):
+        r'/\*(.|\n)*?\*/'
+        t.lexer.lineno += t.value.count('\n')
+        pass
+    
+    def t_COMMENT_NOT_END(self, t):
+        r'/\*(.|\n)*$'
+        x = t.lexpos - self.lexer.lexdata.rfind('\n', 0, t.lexpos)
+        print(f"Error!!!, Comment Block not ended! {t.value[0]} at line no. {t.lineno}, column no. {x} ")
+        t.lexer.skip(1)
+        pass
+    
+    def t_INV_SINGLE_QUOTE(self,t):
+        r'(\'(\\.|[^\\\'])+$)'
+        x = t.lexpos - self.lexer.lexdata.rfind('\n', 0, t.lexpos)
+        print(f"Error!!!, Invalid single quote encountered at line no. {t.lineno}, column no. {x} ")
+        t.lexer.skip(1)
+        pass
+
+    def t_INV_DOUBLE_QUOTE(self,t):
+        r'(\"(\\.|[^\\"])*$)'
+        x = t.lexpos - self.lexer.lexdata.rfind('\n', 0, t.lexpos)
+        print(f"Error!!!, Invalid double quote encountered at line no. {t.lineno}, column no. {x} ")
+        t.lexer.skip(1)
+        pass
+    
     def t_error(self, t):
         x = t.lexpos - self.lexer.lexdata.rfind('\n', 0, t.lexpos)
-        print(f"Error!!!, unknown lexeme {t.value[0]} at line no. {t.lineno}, column no. {x} ")
+        print(f"Error!!!, Unknown lexeme encountered! {t.value[0]} at line no. {t.lineno}, column no. {x}")
         t.lexer.skip(1)
+        pass
 
 def output_token(input):
     # Give the lexer some input
     lexee.lexer.input(input)
 
     # Tokenize
-    print(f"{'token.type':>12} {'token.value':>12} {'token.lineno':>12} {'token.lexpos':>12}")
+    print(f"{'token.type':>16} {'token.value':>16} {'token.lineno':>16} {'token.lexpos':>16}")
 
     while True:
         token = lexee.lexer.token()
         if not token: 
             break      # No more input
         x = token.lexpos - input.rfind('\n', 0, token.lexpos)
-        print(f"{token.type:>12} {token.value:>12} {token.lineno:>12} {x:>12}")
+        print(f"{token.type:>16} {token.value:>16} {token.lineno:>16} {x:>16}")
 
 
 if __name__ == "__main__":
     lexee = lexer()
     lexee.build()
 
-    data = "99.3+64\"hehe\""
-
-    sample_program_1 = '''
-int main()
-{
-    int a = 1;
-    return 0;
-}
-    '''
-
-    sample_program_2 = '''
-int main()
-{
-    int a = 1;
-    if(b==1)
-    {
-        c=1;
-    }
-    else {c=3;}
-    return 0;
-    $$$$$$
-}
-    '''
-
-    output_token(sample_program_2)
+    with open(sys.argv[1],'r') as file:
+        output_token(file.read())
