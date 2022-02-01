@@ -9,6 +9,7 @@ struct student
 
 int main()
 {
+    // Structs 
     struct student* var;
     printf("age is %d",var->age);
     var->age=5;
@@ -32,6 +33,11 @@ int main()
     x<<=4;
     x>>=5;
 
+    // Typecasting
+    float y = (float)x/2;
+
+    // Arrays
+    int a[10], b[10][10];
 
     return 0;
 

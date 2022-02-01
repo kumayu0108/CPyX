@@ -246,5 +246,13 @@ if __name__ == "__main__":
     lexee = lexer()
     lexee.build()
 
-    with open(sys.argv[1],'r') as file:
-        output_token(file.read())
+
+    for filename in sys.argv[1:] :
+        print(f"Lexer output for file {filename}\n")
+
+        with open(filename,'r') as file:
+            output_token(file.read())
+            
+        print('\n')
+        print(''.join(['_']*70))
+        print('\n')

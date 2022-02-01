@@ -20,11 +20,11 @@ int main()
 
         if((x-6))
         {
-            prinf("p3");
+            printf("p3");
         }
         else
         {
-            prinf("p4");
+            printf("p4");
         }
 
         if(x>0)
@@ -34,9 +34,4 @@ int main()
                 if(x>0);
             }
         }
-
-        
-
-
-
 }
