@@ -172,9 +172,18 @@ class lexer():
         return t
     
     def t_CHARACTER(self, t):
-        r'\'.\''
+        r'(\'(\\.|[^\\\'])+\')'
         t.type = 'CHARACTER'
-        t.value = t.value[0]
+        if(len(t.value) == 3):
+            t.value = t.value[1]
+        elif(len(t.value) == 4 and t.value[1] == '\\'):
+            t.value = t.value[1:3]
+        else :
+            x = t.lexpos - self.lexer.lexdata.rfind('\n', 0, t.lexpos)
+            print(f"Error!!!, Invalid single quote character encountered at line no. {t.lineno}, column no. {x} ")
+            t.lexer.skip(1)
+            pass
+        
         return t
        
     string_regex = r'(\"(\\.|[^\\"])*\")'
@@ -196,7 +205,7 @@ class lexer():
         pass
 
     def t_BLOCK_COMMENT(self, t):
-        r'/\*(.|\n)*?\*/'
+        r'/\*(.|\n)*?\*/'   # ? is to identify the closing *
         t.lexer.lineno += t.value.count('\n')
         pass
     
@@ -245,7 +254,6 @@ def output_token(input):
 if __name__ == "__main__":
     lexee = lexer()
     lexee.build()
-
 
     for filename in sys.argv[1:] :
         print(f"Lexer output for file {filename}\n")
