@@ -97,6 +97,7 @@ class Parser():
                     | NOT
                     | NEGATE
         '''
+        p[0] = AST(p)
 
     def p_additive_expression(self,p):
         '''
@@ -162,7 +163,7 @@ class Parser():
     def p_inclusive_or_expression(self,p):
         '''
         inclusive_or_expression : exclusive_or_expression
-                                | inclusive_or_expression BIT exclusive_or_expression
+                                | inclusive_or_expression BIT_OR exclusive_or_expression
         '''
         p[0] = AST(p)
     
@@ -567,14 +568,15 @@ if __name__ == '__main__':
     pars.build()
 
     for filename in sys.argv[1:] :
+        print(f"Parsing file {filename}\n")
         with open(filename, 'r') as f:
             content = f.read()
             pars.lex.lexer.input(content)
 
             open('graph.dot','w').write("digraph G {")
-            print(pars.parser.parse(content, debug=False))
-            open('graph.dot','a').write("\n}")
+            pars.parser.parse(content, debug=False)
 
+            open('graph.dot','a').write("\n}")
             graphs = pydot.graph_from_dot_file('graph.dot')
             graph = graphs[0]
             name = f.name[f.name.rfind('/')+1:]
