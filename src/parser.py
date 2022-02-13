@@ -14,7 +14,6 @@ def AST(p):
     tmp = counter
     if(len(p) == 2):
         return p[1]
-
     with open('graph.dot', 'a') as file:
         file.write("\n" + str(counter) + "[label=\"" + calling_rule_name.replace('"',"") + "\"]")
         for i in range(1, len(p)):
@@ -31,6 +30,8 @@ def AST(p):
 
 class Parser():
     tokens = lexer().tokens
+    lex = lexer()
+    lex.build()
 
     def build(self):
         self.parser = yacc.yacc(module=self, start='translation_unit' ,debug=False)
@@ -161,7 +162,7 @@ class Parser():
     def p_inclusive_or_expression(self,p):
         '''
         inclusive_or_expression : exclusive_or_expression
-                                | inclusive_or_expression BIT_OR exclusive_or_expression
+                                | inclusive_or_expression BIT exclusive_or_expression
         '''
         p[0] = AST(p)
     
@@ -462,6 +463,7 @@ class Parser():
                 | expression_statement
                 | selection_statement
                 | iteration_statement
+                | jump_statement
         '''
         p[0] = AST(p)
 
@@ -544,30 +546,37 @@ class Parser():
                         | declaration_list declaration
         '''
         p[0] = AST(p)
-        
+    
+    def p_jump_statement(self,p):
+        '''
+        jump_statement : RETURN SEMI_COLON
+                        | RETURN expression SEMI_COLON
+        '''
+        p[0] = AST(p)
 
     def p_error(self,p):
         print('Error found while parsing!')
         print(p)
+        x = p.lexpos - self.lex.lexer.lexdata.rfind('\n', 0, p.lexpos)
+        print(f"Error!!!, Unknown lexeme encountered! {p.value[0]} at line no. {p.lineno}, column no. {x}")
         global error_present
         error_present = 1
 
-lex = lexer()
-lex.build()
-# lexer = lex.lexer
+if __name__ == '__main__':
+    pars = Parser()
+    pars.build()
 
-pars = Parser()
-pars.build()
+    for filename in sys.argv[1:] :
+        with open(filename, 'r') as f:
+            content = f.read()
+            pars.lex.lexer.input(content)
 
-file = open('./tests/Milestone_1/test1.c', 'r').read()
-# pars.lex.lexer.input(file)
-# print(file)
+            open('graph.dot','w').write("digraph G {")
+            print(pars.parser.parse(content, debug=False))
+            open('graph.dot','a').write("\n}")
 
-open('graph.dot','w').write("digraph G {")
-print(pars.parser.parse(file, debug=False))
-open('graph.dot','a').write("\n}")
-
-graphs = pydot.graph_from_dot_file('graph.dot')
-# print(len(graphs))
-graph = graphs[0]
-graph.write_png('pydot_graph.png')
+            graphs = pydot.graph_from_dot_file('graph.dot')
+            graph = graphs[0]
+            name = f.name[f.name.rfind('/')+1:]
+            graph.write_png(f'./plots/pydot_graph_{name}.png')
+            f.close()
