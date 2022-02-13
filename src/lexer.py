@@ -16,17 +16,21 @@ class lexer():
         'while'     : 'WHILE',
         'if'        : 'IF',
         'else'      : 'ELSE',
-        # 'return'    : 'RETURN',
+        'return'    : 'RETURN',
         'void'      : 'VOID',
         'sizeof'    : 'SIZEOF',
-        # 'main'      : 'MAIN',
-        'printf'    : 'PRINTF',
-        'scanf'     : 'SCANF',
-        'malloc'    : 'MALLOC',
-        'calloc'    : 'CALLOC',
-        'free'      : 'FREE',
-        'true'      : 'TRUE',
-        'false'     : 'FALSE'
+        'private'   : 'PRIVATE',
+        'protected' : 'PROTECTED',
+        'public'    : 'PUBLIC',
+        'friend'    : 'FRIEND',
+        # 'main'      : 'MAIN', 
+        #'printf'    : 'PRINTF',
+        #'scanf'     : 'SCANF',
+        #'malloc'    : 'MALLOC',
+        #'calloc'    : 'CALLOC',
+        #'free'      : 'FREE',
+        #'true'      : 'TRUE',
+        #'false'     : 'FALSE'
     }
 
     tokens = list(reserved.values()) + [
@@ -49,7 +53,7 @@ class lexer():
             'ASSIGNMENT',   # "="
             'NOT',          # "~"
             'NEGATE',       # "!"
-            'BACKSLASH',    # "\"          \\EXTRA
+            # 'BACKSLASH',    # "\"          \\EXTRA
             
 
             'LEFT_SHIFT',   # "<<"
@@ -147,7 +151,7 @@ class lexer():
     t_DOT = r'\.'
     t_NOT = r'~'
     t_NEGATE = r'!'
-    t_BACKSLASH = r'\\'
+    # t_BACKSLASH = r'\\'
     t_COMMA = r','
     t_PTR_OP = r'\->'
 
