@@ -161,7 +161,7 @@ class Parser():
     def p_inclusive_or_expression(self,p):
         '''
         inclusive_or_expression : exclusive_or_expression
-                                | inclusive_or_expression '|' exclusive_or_expression
+                                | inclusive_or_expression BIT_OR exclusive_or_expression
         '''
         p[0] = AST(p)
     
