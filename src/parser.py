@@ -36,9 +36,15 @@ class Parser():
     def build(self):
         self.parser = yacc.yacc(module=self, start='translation_unit' ,debug=False)
 
+    def p_identifier(self, p):
+        '''
+            identifier : ID
+        '''
+        p[0] = AST(p)
+    
     def p_primary_expression(self,p):
         '''
-        primary_expression : ID
+        primary_expression : identifier
                         | INT_NUM
                         | FLOAT_NUM
                         | CHARACTER
@@ -53,9 +59,9 @@ class Parser():
         postfix_expression : primary_expression
                         | postfix_expression INC
                         | postfix_expression DEC
-                        | postfix_expression DOT ID
+                        | postfix_expression DOT identifier
                         | postfix_expression LEFT_PAR RIGHT_PAR
-                        | postfix_expression PTR_OP ID
+                        | postfix_expression PTR_OP identifier
                         | postfix_expression LEFT_SQ_BR expression RIGHT_SQ_BR
                         | postfix_expression LEFT_PAR argument_expression_list RIGHT_PAR
         '''
@@ -245,6 +251,8 @@ class Parser():
                             | type_specifier declaration_specifiers
                             | type_qualifier
                             | type_qualifier declaration_specifiers
+                            | FRIEND
+                            | function_specifier
         '''
         p[0] = AST(p)
 
@@ -272,7 +280,7 @@ class Parser():
         '''
         p[0] = AST(p)
 
-
+    
     def p_type_specifier(self,p):
         '''
         type_specifier : VOID
@@ -281,14 +289,245 @@ class Parser():
                     | FLOAT
                     | BOOL
                     | struct_specifier
+                    | class_specifier
+        '''
+        # catch
+        p[0] = AST(p)
+
+    def p_class_specifier(self,p):
+        '''
+        class_specifier : class_head LEFT_CUR_BR member_specification RIGHT_CUR_BR
+                        | class_head LEFT_CUR_BR RIGHT_CUR_BR
+        '''
+        p[0] = AST(p)
+        # print(".....")
+        # catch
+
+    
+    def p_class_head(self,p):
+        '''
+        class_head : class_key
+                   | class_key identifier
+                   | class_key base_clause
+                   | class_key identifier base_clause
+                   | class_key nested_name_specifier identifier
+                   | class_key nested_name_specifier identifier base_clause
+        '''
+        p[0] = AST(p)
+        # catch
+        
+    def p_class_key(self, p):
+        '''
+        class_key : CLASS
         '''
         p[0] = AST(p)
 
+    def p_base_clause(self,p):
+        '''
+        base_clause : COLON base_specifier_list
+        '''
+        p[0] = AST(p)
+        # catch
+    
+    def p_base_specifier_list(self,p):
+        '''
+        base_specifier_list : base_specifier
+                            | base_specifier_list COMMA base_specifier
+        '''
+        p[0] = AST(p)
+        # catch
+
+    def p_base_specifier(self,p):
+        '''
+        base_specifier : nested_name_specifier_opt class_name
+                        | COLONCOLON nested_name_specifier_opt class_name
+                        | VIRTUAL access_specifier_opt COLONCOLON nested_name_specifier_opt class_name
+	                    | access_specifier VIRTUAL_opt COLONCOLON nested_name_specifier_opt class_name
+                        | VIRTUAL access_specifier_opt  nested_name_specifier_opt class_name
+	                    | access_specifier VIRTUAL_opt  nested_name_specifier_opt class_name
+        '''
+        p[0] = AST(p)
+        # catch
+    
+    def p_nested_name_specifier_opt(self,p):
+        '''
+        nested_name_specifier_opt : empty 
+                            | nested_name_specifier
+        '''
+        p[0] = AST(p)
+                # catch
+
+    def p_access_specifier_opt(self,p):
+        '''
+        access_specifier_opt : empty
+                            | access_specifier
+        '''
+        p[0] = AST(p)
+                # catch
+
+    def p_VIRTUAL_opt(self,p):
+        '''
+        VIRTUAL_opt : empty
+                            | VIRTUAL
+        '''
+        p[0] = AST(p)
+        # catch
+
+    
+    def p_member_specification(self,p):
+        '''
+        member_specification : member_declaration member_specification
+                             | member_declaration
+                             | access_specifier COLON member_specification
+                             | access_specifier COLON
+        '''
+        p[0] = AST(p)
+        # print("....")
+        # catch
+
+    def p_nested_name_specifier(self,p):
+        '''
+        nested_name_specifier : class_name COLONCOLON
+                              | class_name COLONCOLON nested_name_specifier
+        '''
+        p[0] = AST(p)
+        # catch
+
+    def p_class_name(self,p):
+        '''
+        class_name : identifier
+        '''
+        p[0] = AST(p)
+        # catch
+
+    def p_access_specifier(self,p):
+        '''
+        access_specifier : PRIVATE
+                         | PROTECTED
+                         | PUBLIC
+        '''
+        p[0] = AST(p)
+        # catch
+
+    def p_member_declaration(self,p):
+        #aks
+        '''
+        member_declaration : declaration_specifiers member_declarator_list SEMI_COLON
+                            | member_declarator_list SEMI_COLON
+                            | decl_specifier_seq SEMI_COLON
+                            | SEMI_COLON 
+                            | function_definition
+	                        | function_definition SEMI_COLON
+	                        | qualified_id SEMI_COLON
+                            | NOT class_name LEFT_PAR RIGHT_PAR compound_statement
+        '''
+        p[0] = AST(p)
+        # print(".....")
+        # catch
+    
+    def p_qualified_id(self,p):
+        '''
+        qualified_id : nested_name_specifier unqualified_id
+        '''
+        p[0] = AST(p)
+        # catch
+    
+    def p_unqualified_id(self,p):
+        # removed the rule "NOT class_name" here.
+        '''
+        unqualified_id : identifier
+        ''' 
+        p[0] = AST(p)
+        #catch
+    
+    def p_member_declarator(self, p):
+        # check for eps rule
+        '''
+        member_declarator : declarator pure_specifier_opt
+                        | declarator constant_initializer_opt 
+                        | COLON constant_expression
+                        | identifier COLON constant_expression
+        '''
+        p[0] = AST(p)
+        #catch
+
+
+
+    # catch : maybe error in  
+    def p_pure_specifier(self, p):
+        '''
+        pure_specifier : ASSIGNMENT '0'
+        '''
+        p[0] = AST(p)
+
+
+    def p_pure_specifier_opt(self, p):
+        '''
+        pure_specifier_opt : empty 
+                            | pure_specifier
+        '''
+        p[0] = AST(p)
+
+    def p_constant_initializer(self, p):
+        '''
+        constant_initializer : ASSIGNMENT constant_expression
+        '''
+        p[0] = AST(p)
+
+    def p_constant_initializer_opt(self, p):
+        '''
+        constant_initializer_opt : empty
+                                 | constant_initializer
+        '''
+        p[0] = AST(p)
+
+
+    def p_member_declarator_list(self,p):
+        '''
+        member_declarator_list : member_declarator
+	                          | member_declarator_list COMMA member_declarator
+        '''
+        p[0] = AST(p)
+        # print("....")
+        #catch
+
+    def p_function_specifier(self, p):
+        '''
+        function_specifier : VIRTUAL
+        '''
+        p[0] = AST(p)
+        #catch 
+        
+    # def p_decl_specifier(self, p):        
+    #     '''
+    #     decl_specifier : storage_class_specifier
+    #                     | type_specifier
+    #                     | function_specifier
+    #                     | FRIEND
+    #     '''
+    #     p[0] = AST(p)
+
+
+    def p_decl_specifier_seq(self,p):
+        '''
+            decl_specifier_seq : declaration_specifiers
+                                | decl_specifier_seq declaration_specifiers
+        '''
+        p[0] = AST(p)
+
+    def class_key(self,p): 
+        '''
+        class_key : CLASS
+        '''
+        p[0] = AST(p)
+        # catch
+
+        
     def p_struct_specifier(self,p):
         '''
-        struct_specifier : struct ID LEFT_CUR_BR struct_declaration_list RIGHT_CUR_BR
+        struct_specifier : struct identifier LEFT_CUR_BR struct_declaration_list RIGHT_CUR_BR
                                 | struct LEFT_CUR_BR struct_declaration_list RIGHT_CUR_BR
-                                | struct ID
+                                | struct identifier
         '''
         p[0] = AST(p)
         
@@ -358,7 +597,7 @@ class Parser():
 
     def p_direct_declarator(self,p):
         '''
-        direct_declarator : ID
+        direct_declarator : identifier
                         | LEFT_PAR declarator RIGHT_PAR
                         | direct_declarator LEFT_SQ_BR RIGHT_SQ_BR
                         | direct_declarator LEFT_PAR RIGHT_PAR
@@ -407,8 +646,8 @@ class Parser():
         
     def p_identifier_list(self,p):
         '''
-        identifier_list : ID
-                        | identifier_list COMMA ID
+        identifier_list : identifier
+                        | identifier_list COMMA identifier
         '''   
         p[0] = AST(p)
 
@@ -470,7 +709,7 @@ class Parser():
 
     def p_labeled_statement(self,p):
         '''
-        labeled_statement : ID COLON statement
+        labeled_statement : identifier COLON statement
         '''
         p[0] = AST(p) 
 
@@ -555,6 +794,11 @@ class Parser():
         '''
         p[0] = AST(p)
 
+    def p_empty(self, p):
+        '''
+        empty :
+        '''
+
     def p_error(self,p):
         print('Error found while parsing!')
         print(p)
@@ -568,15 +812,14 @@ if __name__ == '__main__':
     pars.build()
 
     for filename in sys.argv[1:] :
-        print(f"Parsing file {filename}\n")
         with open(filename, 'r') as f:
             content = f.read()
             pars.lex.lexer.input(content)
 
             open('graph.dot','w').write("digraph G {")
-            pars.parser.parse(content, debug=False)
-
+            print(pars.parser.parse(content, debug=False))
             open('graph.dot','a').write("\n}")
+
             graphs = pydot.graph_from_dot_file('graph.dot')
             graph = graphs[0]
             name = f.name[f.name.rfind('/')+1:]
