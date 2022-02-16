@@ -11,6 +11,7 @@ class lexer():
         'float'     : 'FLOAT',
         'bool'      : 'BOOL',
         'struct'    : 'STRUCT',
+        'class'     : 'CLASS',
         'const'     : 'CONST', 
         'for'       : 'FOR',
         'while'     : 'WHILE',
@@ -23,6 +24,7 @@ class lexer():
         'protected' : 'PROTECTED',
         'public'    : 'PUBLIC',
         'friend'    : 'FRIEND',
+        'virtual'   : 'VIRTUAL',
         # 'main'      : 'MAIN', 
         #'printf'    : 'PRINTF',
         #'scanf'     : 'SCANF',
@@ -66,6 +68,7 @@ class lexer():
             'RIGHT_SQ_BR',  # "]"     
             'SEMI_COLON',   # ";"  
             'COLON',        # ":" 
+            'COLONCOLON',   # "::"
             'DOT',          # "."
             'COMMA',        # ","     
             'PTR_OP',       # "->"    
@@ -148,6 +151,7 @@ class lexer():
     t_GREATER = r'>'
     t_LESS = r'<'
     t_COLON = r':'
+    t_COLONCOLON =r'::'
     t_DOT = r'\.'
     t_NOT = r'~'
     t_NEGATE = r'!'
