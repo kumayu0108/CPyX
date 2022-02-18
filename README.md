@@ -52,6 +52,13 @@ To run lexer on predefined test cases for Milestone 1 use
 $ make testM1
 ```
 
+Steps to build and run parser:
+Pass all the files to be analyzed by the parser
+
+```
+$ python3 src/parser.py test_case_1.c test_case_2.c .... test_case_n.c
+```
+
 To run parser on pre defined test cases, run 
 ```
 $ make testM2
