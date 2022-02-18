@@ -317,7 +317,6 @@ class Parser():
 
     
     def p_class_head(self,p):
-        #aks
         '''
         class_head : class_key
                    | class_key identifier
@@ -352,12 +351,24 @@ class Parser():
 
     def p_base_specifier(self,p):
         # removed "| access_specifier VIRTUAL_opt nested_name_specifier_opt class_name" rules here
+        # aks
         '''
-        base_specifier : nested_name_specifier_opt class_name
-                        | COLONCOLON nested_name_specifier_opt class_name
-                        | VIRTUAL access_specifier_opt COLONCOLON nested_name_specifier_opt class_name
-	                    | access_specifier VIRTUAL_opt COLONCOLON nested_name_specifier_opt class_name
-                        | VIRTUAL access_specifier_opt  nested_name_specifier_opt class_name
+        base_specifier :  class_name
+                        | nested_name_specifier class_name
+                        | COLONCOLON class_name
+                        | COLONCOLON nested_name_specifier class_name
+                        | VIRTUAL COLONCOLON class_name
+                        | VIRTUAL access_specifier COLONCOLON class_name
+                        | VIRTUAL COLONCOLON nested_name_specifier class_name
+                        | VIRTUAL access_specifier COLONCOLON nested_name_specifier class_name
+	                    | access_specifier VIRTUAL COLONCOLON nested_name_specifier class_name
+                        | access_specifier COLONCOLON class_name
+                        | access_specifier COLONCOLON nested_name_specifier class_name
+                        | access_specifier VIRTUAL COLONCOLON  class_name
+                        | VIRTUAL access_specifier nested_name_specifier class_name
+                        | VIRTUAL access_specifier class_name
+                        | VIRTUAL class_name
+                        | VIRTUAL nested_name_specifier class_name
 	                    | access_specifier VIRTUAL nested_name_specifier class_name
                         | access_specifier nested_name_specifier class_name
                         | access_specifier VIRTUAL class_name
@@ -365,31 +376,6 @@ class Parser():
         '''
         p[0] = AST(p)
         # catch
-    
-    def p_nested_name_specifier_opt(self,p):
-        '''
-        nested_name_specifier_opt : empty 
-                            | nested_name_specifier
-        '''
-        p[0] = AST(p)
-                # catch
-
-    def p_access_specifier_opt(self,p):
-        '''
-        access_specifier_opt : empty
-                            | access_specifier
-        '''
-        p[0] = AST(p)
-                # catch
-
-    def p_VIRTUAL_opt(self,p):
-        '''
-        VIRTUAL_opt : empty
-                    | VIRTUAL
-        '''
-        p[0] = AST(p)
-        # catch
-
     
     def p_member_specification(self,p):
         '''
@@ -434,6 +420,7 @@ class Parser():
                             | SEMI_COLON 
                             | function_definition
 	                        | function_definition SEMI_COLON
+                            | VIRTUAL function_definition
 	                        | qualified_id SEMI_COLON
                             | NOT class_name LEFT_PAR RIGHT_PAR compound_statement
         '''
