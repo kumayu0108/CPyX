@@ -749,8 +749,8 @@ class Parser():
 
     def p_selection_statement(self,p):
         '''
-        selection_statement : IF LEFT_PAR expression RIGHT_PAR statement %prec IFX1
-                            | IF LEFT_PAR expression RIGHT_PAR statement ELSE statement %prec IFX8
+        selection_statement : IF LEFT_PAR expression RIGHT_PAR statement 
+                            | IF LEFT_PAR expression RIGHT_PAR statement ELSE statement
         '''
         pass
     def p_iteration_statement(self,p):
