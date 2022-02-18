@@ -239,6 +239,7 @@ class Parser():
         '''
         declaration : declaration_specifiers SEMI_COLON
                     | declaration_specifiers init_declarator_list SEMI_COLON
+                    | CLASS_OBJ identifier init_declarator_list SEMI_COLON
         '''
         p[0] = AST(p)
     
@@ -288,11 +289,22 @@ class Parser():
                     | INT
                     | FLOAT
                     | BOOL
+                    | STRING_KEY
                     | struct_specifier
                     | class_specifier
         '''
         # catch
         p[0] = AST(p)
+
+    # def p_simple_type_specifier(self, p):
+    #     '''
+    #     simple_type_specifier : COLONCOLON nested_name_specifier class_name
+    #                         | nested_name_specifier class_name
+    #                         | COLONCOLON class_name
+    #                         | class_name
+    #     '''
+    #     p[0] = AST(p)
+
 
     def p_class_specifier(self,p):
         '''
@@ -305,6 +317,7 @@ class Parser():
 
     
     def p_class_head(self,p):
+        #aks
         '''
         class_head : class_key
                    | class_key identifier
@@ -338,13 +351,17 @@ class Parser():
         # catch
 
     def p_base_specifier(self,p):
+        # removed "| access_specifier VIRTUAL_opt nested_name_specifier_opt class_name" rules here
         '''
         base_specifier : nested_name_specifier_opt class_name
                         | COLONCOLON nested_name_specifier_opt class_name
                         | VIRTUAL access_specifier_opt COLONCOLON nested_name_specifier_opt class_name
 	                    | access_specifier VIRTUAL_opt COLONCOLON nested_name_specifier_opt class_name
                         | VIRTUAL access_specifier_opt  nested_name_specifier_opt class_name
-	                    | access_specifier VIRTUAL_opt  nested_name_specifier_opt class_name
+	                    | access_specifier VIRTUAL nested_name_specifier class_name
+                        | access_specifier nested_name_specifier class_name
+                        | access_specifier VIRTUAL class_name
+                        | access_specifier class_name
         '''
         p[0] = AST(p)
         # catch
@@ -368,7 +385,7 @@ class Parser():
     def p_VIRTUAL_opt(self,p):
         '''
         VIRTUAL_opt : empty
-                            | VIRTUAL
+                    | VIRTUAL
         '''
         p[0] = AST(p)
         # catch
@@ -410,7 +427,6 @@ class Parser():
         # catch
 
     def p_member_declaration(self,p):
-        #aks
         '''
         member_declaration : declaration_specifiers member_declarator_list SEMI_COLON
                             | member_declarator_list SEMI_COLON
@@ -647,9 +663,12 @@ class Parser():
     def p_identifier_list(self,p):
         '''
         identifier_list : identifier
+                        | INT_NUM
                         | identifier_list COMMA identifier
+                        | identifier_list COMMA INT_NUM
         '''   
         p[0] = AST(p)
+        # changed!!! added int_num too!!
 
     def p_type_name(self,p):
         '''
