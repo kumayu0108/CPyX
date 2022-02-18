@@ -7,7 +7,7 @@ testM1:	src/lexer.py
 testM2: src/parser.py
 	@echo "Running pre defined test cases for parser"
 	@for i in `seq 1 7`; do \
-		python3 src/parser.py tests/Milestone_1/test$$i.c ; \
+		python3 src/parser.py tests/Milestone_2/test$$i.c ; \
 	done
 	
 clean: 
