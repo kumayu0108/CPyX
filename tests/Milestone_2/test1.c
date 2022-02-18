@@ -16,7 +16,7 @@ int main()
         }
     }
 
-    if(a == 1) printf("abcd\n");
+    // if(a == 1) printf("abcd\n");
     if(b == 2) printf("pqrs\n");
     else printf("wxyz\n");
     

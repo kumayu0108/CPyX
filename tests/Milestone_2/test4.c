@@ -1,34 +1,16 @@
-// INHERITENCE TESTING
-class abc{
-    private:
-        friend a;
-        int x,y,z;
-    public:
-        int add(int p,int q){
-            return p+q;
-        }
-        abc(int num){
-            x = num;
-            y = num;
-            z = num;
-        }
-        ~abc(){
-            printf("bye!!");
-        }
-}
 
-
-class pqr : private abc {
-    private :
-        int p,q,r;
-    public:
-        int show(int num1){
-            printf("%d",num1);
-        }
-}
 
 int main()
 {
-   int a[5][5];
+    int x=5;
+    int y=7;
+   int a[10];
+   a[0]=x++ ;
+   a[1]=y*(x++);
+
+   a[2]*=3;
+   a[4]/=10;
+   a[5]<<=2;
+
 
 }

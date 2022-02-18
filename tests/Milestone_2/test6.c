@@ -1,33 +1,33 @@
-// INHERITENCE TESTING
-class abc{
-    private:
-        friend a;
-        int x,y,z;
-    public:
-        int add(int p,int q){
-            return p+q;
-        }
-        abc(int num){
-            x = num;
-            y = num;
-            z = num;
-        }
-        ~abc(){
-            printf("bye!!");
-        }
-}
-
-
-class pqr : private abc {
-    private :
-        int p,q,r;
-    public:
-        int show(int num1){
-            printf("%d",num1);
-        }
-}
-
 int main()
 {
-    return 0;
+  int test[2][3][2];
+
+  printf("Enter 12 values: \n");
+
+  for (int i = 0; i < 2; ++i)
+  {
+    for (int j = 0; j < 3; ++j)
+    {
+      for (int k = 0; k < 2; ++k)
+      {
+        scanf("%d", &test[i][j][k]);
+      }
+    }
+  }
+
+  // Printing values with proper index.
+
+  printf("\nDisplaying values:\n");
+  for (int i = 0; i < 2; ++i)
+  {
+    for (int j = 0; j < 3; ++j)
+    {
+      for (int k = 0; k < 2; ++k)
+      {
+        printf("test[%d][%d][%d] = %d\n", i, j, k, test[i][j][k]);
+      }
+    }
+  }
+
+  return 0;
 }

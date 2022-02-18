@@ -1,34 +1,31 @@
-// Object Declaration Testing
-class abc{
-    private:
-        friend a;
-        int x,y,z;
-    public:
-        int add(int p,int q){
-            return p+q;
-        }
-        abc(int num){
-            x = num;
-            y = num;
-            z = num;
-        }
-        ~abc(){
-            printf("bye!!");
-        }
-}
-
-class pqr : private abc {
-    private :
-        int p,q,r;
-    public:
-        int show(int num1){
-            printf("%d",num1);
-        }
-}
-
 int main()
 {
-    string x = "cs335a";
-    class_obj abc class_1;
+    int t;
+    scanf("%d", &t) ;
+    while (t--)
+    {
+        int n;
+        scanf("%d", &n);
+        int a1;
+        int carspd[n];
+        for (a1 = 0; a1 < n; a1++)
+        {
+            scanf("%d", &carspd[a1]);
+        }
+        int x = 1;
+        for (a1 = 0; a1 < n - 1; a1++)
+        {
+            if (carspd[a1] < carspd[a1 + 1])
+            {
+                carspd[a1] = carspd[a1 + 1];
+            }
+            else if (carspd[a1] >= carspd[a1 + 1])
+            {
+                x++;
+            }
+        }
+        printf("%d\n", x);
+    }
+
     return 0;
 }
