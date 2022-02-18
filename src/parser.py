@@ -38,7 +38,6 @@ class Parser():
         ('left', 'ADD', 'SUB'),
         ('left', 'DIV', 'MUL', 'MODULO'),
         ('left', 'INC', 'DEC'),
-        ('left','ID'),
         ('nonassoc', 'IFX1'),
         ('nonassoc', 'IFX2'),
         ('nonassoc', 'IFX3'),
@@ -404,8 +403,8 @@ class Parser():
 
     def p_nested_name_specifier(self,p):
         '''
-        nested_name_specifier : class_name COLONCOLON
-                              | class_name COLONCOLON nested_name_specifier
+        nested_name_specifier : ID COLONCOLON %prec IFX8
+                              | ID COLONCOLON nested_name_specifier %prec IFX1
         '''
         pass
         # catch
@@ -750,8 +749,8 @@ class Parser():
 
     def p_selection_statement(self,p):
         '''
-        selection_statement : IF LEFT_PAR expression RIGHT_PAR statement 
-                            | IF LEFT_PAR expression RIGHT_PAR statement ELSE statement
+        selection_statement : IF LEFT_PAR expression RIGHT_PAR statement %prec IFX1
+                            | IF LEFT_PAR expression RIGHT_PAR statement ELSE statement %prec IFX8
         '''
         pass
     def p_iteration_statement(self,p):
