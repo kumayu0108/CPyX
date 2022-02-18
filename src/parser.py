@@ -2,30 +2,31 @@ import pydot
 import ply.yacc as yacc
 import lexer
 import sys
+import re
 from lexer import lexer
 counter = 0
 
-def AST(p):
-    global counter
-    calling_func_name = sys._getframe(1).f_code.co_name
-    calling_rule_name = calling_func_name[2:]
+# def AST(p):
+#     global counter
+#     calling_func_name = sys._getframe(1).f_code.co_name
+#     calling_rule_name = calling_func_name[2:]
 
-    counter = counter + 1
-    tmp = counter
-    if(len(p) == 2):
-        return p[1]
-    with open('graph.dot', 'a') as file:
-        file.write("\n" + str(counter) + "[label=\"" + calling_rule_name.replace('"',"") + "\"]")
-        for i in range(1, len(p)):
-            if(type(p[i]) is tuple):
-                file.write("\n" + str(tmp) + " -> " + str(p[i][1]))
-            else :
-                counter = counter + 1
-                p[i] = (p[i], counter)
-                file.write("\n" + str(counter) + "[label=\"" + str(p[i][0]).replace('"',"") + "\"]")
-                file.write("\n" + str(tmp) + " -> " + str(p[i][1]))
+#     counter = counter + 1
+#     tmp = counter
+#     if(len(p) == 2):
+#         return p[1]
+#     with open('graph.dot', 'a') as file:
+#         file.write("\n" + str(counter) + "[label=\"" + calling_rule_name.replace('"',"") + "\"]")
+#         forr i in range(1, len(p)):
+#             if(type(p[i]) is tuple):
+#                 filte.write("\n" + str(tmp) + " -> " + str(p[i][1]))
+#             else :
+#                 counter = counter + 1
+#                 p[i] = (p[i], counter)
+#                 file.write("\n" + str(counter) + "[label=\"" + str(p[i][0]).replace('"',"") + "\"]")
+#                 file.write("\n" + str(tmp) + " -> " + str(p[i][1]))
     
-    return (calling_rule_name,tmp)
+#     return (calling_rule_name,tmp)
     
 
 class Parser():
@@ -33,14 +34,29 @@ class Parser():
     lex = lexer()
     lex.build()
 
+    precedence = (
+        ('left', 'ADD', 'SUB'),
+        ('left', 'DIV', 'MUL', 'MODULO'),
+        ('left', 'INC', 'DEC'),
+        ('left','ID'),
+        ('nonassoc', 'IFX1'),
+        ('nonassoc', 'IFX2'),
+        ('nonassoc', 'IFX3'),
+        ('nonassoc', 'IFX4'),
+        ('nonassoc', 'IFX5'),
+        ('nonassoc', 'IFX6'),
+        ('nonassoc', 'IFX7'),
+        ('nonassoc', 'IFX8')
+    )
+
     def build(self):
-        self.parser = yacc.yacc(module=self, start='translation_unit' ,debug=False)
+        self.parser = yacc.yacc(module=self, start='translation_unit' ,debug=True)
 
     def p_identifier(self, p):
         '''
             identifier : ID
         '''
-        p[0] = AST(p)
+        pass
     
     def p_primary_expression(self,p):
         '''
@@ -51,7 +67,7 @@ class Parser():
                         | STRING
                         | LEFT_PAR expression RIGHT_PAR
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_postfix_expression(self,p):
@@ -65,7 +81,7 @@ class Parser():
                         | postfix_expression LEFT_SQ_BR expression RIGHT_SQ_BR
                         | postfix_expression LEFT_PAR argument_expression_list RIGHT_PAR
         '''
-        p[0] = AST(p)
+        pass
 
         
         
@@ -74,7 +90,7 @@ class Parser():
         argument_expression_list : assignment_expression
                                 | argument_expression_list COMMA assignment_expression
         '''
-        p[0] = AST(p)
+        pass
         
     def p_unary_expression(self,p):
         '''
@@ -85,14 +101,14 @@ class Parser():
                         | unary_operator cast_expression
                         | SIZEOF LEFT_PAR type_name RIGHT_PAR
         '''
-        p[0] = AST(p)
+        pass
         
     def p_cast_expression(self,p):
         '''
         cast_expression : unary_expression
                         | LEFT_PAR type_name RIGHT_PAR cast_expression
         '''
-        p[0] = AST(p)
+        pass
 
     def p_unary_operator(self,p):
         '''
@@ -103,7 +119,7 @@ class Parser():
                     | NOT
                     | NEGATE
         '''
-        p[0] = AST(p)
+        pass
 
     def p_additive_expression(self,p):
         '''
@@ -111,7 +127,7 @@ class Parser():
                             | additive_expression ADD multiplicative_expression
                             | additive_expression SUB multiplicative_expression
         '''
-        p[0] = AST(p)
+        pass
 
     def p_mulitplicative_expression(self,p):
         '''
@@ -120,7 +136,7 @@ class Parser():
                                 | multiplicative_expression DIV cast_expression
                                 | multiplicative_expression MODULO cast_expression
         '''
-        p[0] = AST(p)
+        pass
 
 
     def p_shift_expression(self,p):
@@ -129,7 +145,7 @@ class Parser():
                         | shift_expression LEFT_SHIFT additive_expression
                         | shift_expression RIGHT_SHIFT additive_expression
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_relational_expression(self,p):
@@ -140,7 +156,7 @@ class Parser():
                             | relational_expression LEQ shift_expression
                             | relational_expression GEQ shift_expression
         '''
-        p[0] = AST(p)
+        pass
 
     def p_equality_expression(self,p):
         '''
@@ -148,14 +164,14 @@ class Parser():
                             | equality_expression EQ_CHECK relational_expression
                             | equality_expression NOT_EQ relational_expression
         '''
-        p[0] = AST(p)
+        pass
 
     def p_and_expression(self,p):
         '''
         and_expression : equality_expression
                     | and_expression BIT_AND equality_expression
         '''
-        p[0] = AST(p)
+        pass
     
 
     def p_exclusive_or_expression(self,p):
@@ -163,7 +179,7 @@ class Parser():
         exclusive_or_expression : and_expression
                                 | exclusive_or_expression XOR and_expression
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_inclusive_or_expression(self,p):
@@ -171,7 +187,7 @@ class Parser():
         inclusive_or_expression : exclusive_or_expression
                                 | inclusive_or_expression BIT_OR exclusive_or_expression
         '''
-        p[0] = AST(p)
+        pass
     
 
     def p_logical_and_expression(self,p):
@@ -179,7 +195,7 @@ class Parser():
         logical_and_expression : inclusive_or_expression
                             | logical_and_expression AND inclusive_or_expression
         '''
-        p[0] = AST(p)
+        pass
         
         
 
@@ -188,7 +204,7 @@ class Parser():
         logical_or_expression : logical_and_expression
                             | logical_or_expression OR logical_and_expression
         '''
-        p[0] = AST(p)
+        pass
 
 
     def p_conditional_expression(self,p):
@@ -196,14 +212,14 @@ class Parser():
         conditional_expression : logical_or_expression
                             | logical_or_expression TERNARY expression COLON conditional_expression
         '''
-        p[0] = AST(p)
+        pass
 
     def p_assignment_expression(self,p):
         '''
         assignment_expression : conditional_expression
                             | unary_expression assignment_operator assignment_expression
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_assignment_operator(self,p):
@@ -220,20 +236,20 @@ class Parser():
                             | SHORT_LEFT_SHIFT
                             | SHORT_RIGHT_SHIFT
         '''
-        p[0] = AST(p)
+        pass
 
     def p_expression(self,p):
         '''
         expression : assignment_expression
                 | expression COMMA assignment_expression
         '''
-        p[0] = AST(p)
+        pass
 
     def p_constant_expression(self,p):
         '''
         constant_expression : conditional_expression
         '''
-        p[0] = AST(p)
+        pass
 
     def p_declaration(self,p):
         '''
@@ -241,21 +257,21 @@ class Parser():
                     | declaration_specifiers init_declarator_list SEMI_COLON
                     | CLASS_OBJ identifier init_declarator_list SEMI_COLON
         '''
-        p[0] = AST(p)
+        pass
     
 
     def p_declaration_specifiers(self,p):
         '''
-        declaration_specifiers : storage_class_specifier
-                            | storage_class_specifier declaration_specifiers
-                            | type_specifier
-                            | type_specifier declaration_specifiers
-                            | type_qualifier
-                            | type_qualifier declaration_specifiers
-                            | FRIEND
-                            | function_specifier
+        declaration_specifiers : storage_class_specifier %prec IFX1
+                            | storage_class_specifier declaration_specifiers %prec IFX2
+                            | type_specifier %prec IFX3
+                            | type_specifier declaration_specifiers %prec IFX4
+                            | type_qualifier %prec IFX5
+                            | type_qualifier declaration_specifiers %prec IFX6
+                            | FRIEND %prec IFX7
+                            | VIRTUAL %prec IFX8
         '''
-        p[0] = AST(p)
+        pass
 
     
 
@@ -264,7 +280,7 @@ class Parser():
         init_declarator_list : init_declarator
                             | init_declarator_list COMMA init_declarator
         '''
-        p[0] = AST(p)
+        pass
     
 
     def p_init_declarator(self,p):
@@ -272,29 +288,29 @@ class Parser():
         init_declarator : declarator
                         | declarator ASSIGNMENT initializer
         '''
-        p[0] = AST(p)
+        pass
     
 
     def p_storage_class_specifier(self,p):
         '''
         storage_class_specifier : AUTO
         '''
-        p[0] = AST(p)
+        pass
 
     
     def p_type_specifier(self,p):
         '''
-        type_specifier : VOID
-                    | CHAR
-                    | INT
-                    | FLOAT
-                    | BOOL
+        type_specifier : VOID  
+                    | CHAR  
+                    | INT  
+                    | FLOAT  
+                    | BOOL  
                     | STRING_KEY
                     | struct_specifier
                     | class_specifier
         '''
         # catch
-        p[0] = AST(p)
+        pass
 
     # def p_simple_type_specifier(self, p):
     #     '''
@@ -303,7 +319,7 @@ class Parser():
     #                         | COLONCOLON class_name
     #                         | class_name
     #     '''
-    #     p[0] = AST(p)
+    #     pass
 
 
     def p_class_specifier(self,p):
@@ -311,7 +327,7 @@ class Parser():
         class_specifier : class_head LEFT_CUR_BR member_specification RIGHT_CUR_BR
                         | class_head LEFT_CUR_BR RIGHT_CUR_BR
         '''
-        p[0] = AST(p)
+        pass
         # print(".....")
         # catch
 
@@ -325,20 +341,20 @@ class Parser():
                    | class_key nested_name_specifier identifier
                    | class_key nested_name_specifier identifier base_clause
         '''
-        p[0] = AST(p)
+        pass
         # catch
         
     def p_class_key(self, p):
         '''
         class_key : CLASS
         '''
-        p[0] = AST(p)
+        pass
 
     def p_base_clause(self,p):
         '''
         base_clause : COLON base_specifier_list
         '''
-        p[0] = AST(p)
+        pass
         # catch
     
     def p_base_specifier_list(self,p):
@@ -346,12 +362,10 @@ class Parser():
         base_specifier_list : base_specifier
                             | base_specifier_list COMMA base_specifier
         '''
-        p[0] = AST(p)
+        pass
         # catch
 
     def p_base_specifier(self,p):
-        # removed "| access_specifier VIRTUAL_opt nested_name_specifier_opt class_name" rules here
-        # aks
         '''
         base_specifier :  class_name
                         | nested_name_specifier class_name
@@ -374,7 +388,7 @@ class Parser():
                         | access_specifier VIRTUAL class_name
                         | access_specifier class_name
         '''
-        p[0] = AST(p)
+        pass
         # catch
     
     def p_member_specification(self,p):
@@ -384,7 +398,7 @@ class Parser():
                              | access_specifier COLON member_specification
                              | access_specifier COLON
         '''
-        p[0] = AST(p)
+        pass
         # print("....")
         # catch
 
@@ -393,14 +407,14 @@ class Parser():
         nested_name_specifier : class_name COLONCOLON
                               | class_name COLONCOLON nested_name_specifier
         '''
-        p[0] = AST(p)
+        pass
         # catch
 
     def p_class_name(self,p):
         '''
         class_name : identifier
         '''
-        p[0] = AST(p)
+        pass
         # catch
 
     def p_access_specifier(self,p):
@@ -409,7 +423,7 @@ class Parser():
                          | PROTECTED
                          | PUBLIC
         '''
-        p[0] = AST(p)
+        pass
         # catch
 
     def p_member_declaration(self,p):
@@ -418,13 +432,13 @@ class Parser():
                             | member_declarator_list SEMI_COLON
                             | decl_specifier_seq SEMI_COLON
                             | SEMI_COLON 
-                            | function_definition
-	                        | function_definition SEMI_COLON
+                            | function_definition %prec IFX1
+	                        | function_definition SEMI_COLON %prec IFX2
                             | VIRTUAL function_definition
 	                        | qualified_id SEMI_COLON
                             | NOT class_name LEFT_PAR RIGHT_PAR compound_statement
         '''
-        p[0] = AST(p)
+        pass
         # print(".....")
         # catch
     
@@ -432,7 +446,7 @@ class Parser():
         '''
         qualified_id : nested_name_specifier unqualified_id
         '''
-        p[0] = AST(p)
+        pass
         # catch
     
     def p_unqualified_id(self,p):
@@ -440,18 +454,19 @@ class Parser():
         '''
         unqualified_id : identifier
         ''' 
-        p[0] = AST(p)
+        pass
         #catch
     
     def p_member_declarator(self, p):
         # check for eps rule
         '''
-        member_declarator : declarator pure_specifier_opt
-                        | declarator constant_initializer_opt 
+        member_declarator : declarator
+                        | declarator pure_specifier
+                        | declarator constant_initializer
                         | COLON constant_expression
                         | identifier COLON constant_expression
         '''
-        p[0] = AST(p)
+        pass
         #catch
 
 
@@ -461,28 +476,14 @@ class Parser():
         '''
         pure_specifier : ASSIGNMENT '0'
         '''
-        p[0] = AST(p)
+        pass
 
-
-    def p_pure_specifier_opt(self, p):
-        '''
-        pure_specifier_opt : empty 
-                            | pure_specifier
-        '''
-        p[0] = AST(p)
 
     def p_constant_initializer(self, p):
         '''
         constant_initializer : ASSIGNMENT constant_expression
         '''
-        p[0] = AST(p)
-
-    def p_constant_initializer_opt(self, p):
-        '''
-        constant_initializer_opt : empty
-                                 | constant_initializer
-        '''
-        p[0] = AST(p)
+        pass
 
 
     def p_member_declarator_list(self,p):
@@ -490,15 +491,15 @@ class Parser():
         member_declarator_list : member_declarator
 	                          | member_declarator_list COMMA member_declarator
         '''
-        p[0] = AST(p)
+        pass
         # print("....")
         #catch
 
-    def p_function_specifier(self, p):
-        '''
-        function_specifier : VIRTUAL
-        '''
-        p[0] = AST(p)
+    # def p_function_specifier(self, p):
+    #     '''
+    #     function_specifier : VIRTUAL
+    #     '''
+    #     pass
         #catch 
         
     # def p_decl_specifier(self, p):        
@@ -508,7 +509,7 @@ class Parser():
     #                     | function_specifier
     #                     | FRIEND
     #     '''
-    #     p[0] = AST(p)
+    #     pass
 
 
     def p_decl_specifier_seq(self,p):
@@ -516,13 +517,13 @@ class Parser():
             decl_specifier_seq : declaration_specifiers
                                 | decl_specifier_seq declaration_specifiers
         '''
-        p[0] = AST(p)
+        pass
 
     def class_key(self,p): 
         '''
         class_key : CLASS
         '''
-        p[0] = AST(p)
+        pass
         # catch
 
         
@@ -532,45 +533,45 @@ class Parser():
                                 | struct LEFT_CUR_BR struct_declaration_list RIGHT_CUR_BR
                                 | struct identifier
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_struct(self,p):
         '''
         struct : STRUCT
         '''
-        p[0] = AST(p)
+        pass
 
     def p_struct_declaration_list(self,p):
         '''
         struct_declaration_list : struct_declaration
                                 | struct_declaration_list struct_declaration
         '''
-        p[0] = AST(p)
+        pass
 
 
     def p_struct_declaration(self,p):
         '''
         struct_declaration : specifier_qualifier_list struct_declarator_list SEMI_COLON
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_specifier_qualifier_list(self,p):
         '''
-        specifier_qualifier_list : type_specifier specifier_qualifier_list
-                                | type_specifier
-                                | type_qualifier specifier_qualifier_list
-                                | type_qualifier
+        specifier_qualifier_list : type_specifier specifier_qualifier_list  
+                                | type_specifier  
+                                | type_qualifier specifier_qualifier_list   
+                                | type_qualifier 
         '''
-        p[0] = AST(p)
+        pass
 
     def p_struct_declarator_list(self,p):
         '''
         struct_declarator_list : struct_declarator
                             | struct_declarator_list COMMA struct_declarator
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_struct_declarator(self,p):
@@ -579,14 +580,14 @@ class Parser():
                         | COLON constant_expression
                         | declarator COLON constant_expression
         '''
-        p[0] = AST(p)
+        pass
 
 
     def p_type_qualifier(self,p):
         '''
         type_qualifier : CONST
         '''
-        p[0] = AST(p)
+        pass
 
  
 
@@ -595,7 +596,7 @@ class Parser():
         declarator : pointer direct_declarator
                 | direct_declarator
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_direct_declarator(self,p):
@@ -608,7 +609,7 @@ class Parser():
                         | direct_declarator LEFT_PAR parameter_type_list RIGHT_PAR
                         | direct_declarator LEFT_PAR identifier_list RIGHT_PAR
         '''
-        p[0] = AST(p)
+        pass
         
     def p_pointer(self,p):
         '''
@@ -617,27 +618,27 @@ class Parser():
                 | MUL pointer
                 | MUL type_qualifier_list pointer
         '''
-        p[0] = AST(p)
+        pass
 
     def p_type_qualifier_list(self,p):
         '''
         type_qualifier_list : type_qualifier
                             | type_qualifier_list type_qualifier
         '''
-        p[0] = AST(p)
+        pass
 
     def p_parameter_type_list(self,p):
         '''
         parameter_type_list : parameter_list
         '''
-        p[0] = AST(p)
+        pass
 
     def p_parameter_list(self,p):
         '''
         parameter_list : parameter_declaration
                     | parameter_list COMMA parameter_declaration
         '''
-        p[0] = AST(p)
+        pass
         
     def p_parameter_declaration(self,p):
         '''
@@ -645,7 +646,7 @@ class Parser():
                             | declaration_specifiers abstract_declarator
                             | declaration_specifiers
         '''
-        p[0] = AST(p)
+        pass
         
     def p_identifier_list(self,p):
         '''
@@ -654,7 +655,7 @@ class Parser():
                         | identifier_list COMMA identifier
                         | identifier_list COMMA INT_NUM
         '''   
-        p[0] = AST(p)
+        pass
         # changed!!! added int_num too!!
 
     def p_type_name(self,p):
@@ -662,7 +663,7 @@ class Parser():
         type_name : specifier_qualifier_list
                 | specifier_qualifier_list abstract_declarator
         '''
-        p[0] = AST(p)
+        pass
 
     def p_abstract_declarator(self,p):
         '''
@@ -670,7 +671,7 @@ class Parser():
                             | direct_abstract_declarator
                             | pointer direct_abstract_declarator
         '''
-        p[0] = AST(p)
+        pass
         
 
     def p_direct_abstract_declarator(self,p):
@@ -685,7 +686,7 @@ class Parser():
                                 | direct_abstract_declarator LEFT_SQ_BR constant_expression RIGHT_SQ_BR
                                 | direct_abstract_declarator LEFT_PAR parameter_type_list RIGHT_PAR
         '''
-        p[0] = AST(p)
+        pass
 
     def p_initializer(self,p):
         '''
@@ -693,14 +694,14 @@ class Parser():
                     | LEFT_CUR_BR initializer_list RIGHT_CUR_BR
                     | LEFT_CUR_BR initializer_list COMMA RIGHT_CUR_BR
         '''
-        p[0] = AST(p)
+        pass
 
     def p_initializer_list(self,p):
         '''
         initializer_list : initializer
                         | initializer_list COMMA initializer
         '''
-        p[0] = AST(p)
+        pass
 
     def p_statement(self,p):
         '''
@@ -711,48 +712,48 @@ class Parser():
                 | iteration_statement
                 | jump_statement
         '''
-        p[0] = AST(p)
+        pass
 
     def p_labeled_statement(self,p):
         '''
         labeled_statement : identifier COLON statement
         '''
-        p[0] = AST(p) 
+        pass 
 
     def p_compound_statement(self,p):
         '''
         compound_statement : LEFT_CUR_BR RIGHT_CUR_BR
                         | LEFT_CUR_BR block_item_list RIGHT_CUR_BR
         '''
-        p[0] = AST(p)
+        pass
         
     def p_block_item_list(self,p):
         '''
         block_item_list : block_item
                         | block_item_list block_item
         '''
-        p[0] = AST(p)
+        pass
 
     def p_block_item(self,p):
         '''
         block_item : declaration
                     | statement
         '''
-        p[0] = AST(p)
+        pass
 
     def p_expression_statement(self,p):
         '''
         expression_statement : SEMI_COLON
                             | expression SEMI_COLON
         '''
-        p[0] = AST(p)
+        pass
 
     def p_selection_statement(self,p):
         '''
-        selection_statement : IF LEFT_PAR expression RIGHT_PAR statement
+        selection_statement : IF LEFT_PAR expression RIGHT_PAR statement 
                             | IF LEFT_PAR expression RIGHT_PAR statement ELSE statement
         '''
-        p[0] = AST(p)
+        pass
     def p_iteration_statement(self,p):
         '''
         iteration_statement : WHILE LEFT_PAR expression RIGHT_PAR statement
@@ -761,21 +762,21 @@ class Parser():
                             | FOR LEFT_PAR declaration expression_statement RIGHT_PAR statement
                             | FOR LEFT_PAR declaration expression_statement expression RIGHT_PAR statement
         '''
-        p[0] = AST(p)
+        pass
 
     def p_translation_unit(self,p):
         '''
         translation_unit : external_declaration
                         | translation_unit external_declaration
         '''
-        p[0] = AST(p)
+        pass
 
     def p_external_declaration(self,p):
         '''
         external_declaration : function_definition
                             | declaration
         '''
-        p[0] = AST(p)
+        pass
 
     def p_function_definition(self,p):
         '''
@@ -784,26 +785,22 @@ class Parser():
                             | declarator declaration_list compound_statement
                             | declarator compound_statement
         '''
-        p[0] = AST(p)
+        pass
     
     def p_declaration_list(self,p):
         '''
         declaration_list : declaration
                         | declaration_list declaration
         '''
-        p[0] = AST(p)
+        pass
     
     def p_jump_statement(self,p):
         '''
         jump_statement : RETURN SEMI_COLON
                         | RETURN expression SEMI_COLON
         '''
-        p[0] = AST(p)
+        pass
 
-    def p_empty(self, p):
-        '''
-        empty :
-        '''
 
     def p_error(self,p):
         print('Error found while parsing!')
@@ -822,12 +819,45 @@ if __name__ == '__main__':
             content = f.read()
             pars.lex.lexer.input(content)
 
-            open('graph.dot','w').write("digraph G {")
-            print(pars.parser.parse(content, debug=False))
-            open('graph.dot','a').write("\n}")
+            # open('graph.dot','w').write("digraph G {")
+            pars.parser.parse(content, debug=False)
+            # open('graph.dot','a').write("\n}")
 
-            graphs = pydot.graph_from_dot_file('graph.dot')
-            graph = graphs[0]
-            name = f.name[f.name.rfind('/')+1:]
-            graph.write_png(f'./plots/pydot_graph_{name}.png')
-            f.close()
+    #         graphs = pydot.graph_from_dot_file('graph.dot')
+    #         graph = graphs[0]
+    #         name = f.name[f.name.rfind('/')+1:]
+    #         graph.write_png(f'./plots/pydot_graph_{name}.png')
+    #         f.close()
+            with open('./src/parser.out', 'r') as f:
+                content = f.readlines()
+                f.close()
+
+            outfile = ''
+
+            i=0
+            state_count = -1
+            while i < len(content):
+                if(len(re.findall(r'^state \d+', content[i])) > 0):
+                    # is of the form 'state {num}'
+                    state_count = state_count + 1
+                    
+                else :
+                    gotoState = re.findall(r'go to state \d+', content[i])
+                    if(len(gotoState) > 0):
+                        numState = int(re.findall(r'\d+', gotoState[0])[-1])
+                        label = content[i].lstrip().split()[0]
+
+                        to_write = f'I{state_count} -> I{numState} [label={label}]\n'
+                        outfile += to_write
+                
+                i+=1
+
+            header = 'digraph "LR Automata" {\n'
+            for state_num in range(state_count):
+                header += f' I{state_num}\n'
+
+            outfile = header + outfile + '}'
+
+            with open('./bin/outfile.dot', 'w') as f:
+                f.write(outfile)
+                f.close()
