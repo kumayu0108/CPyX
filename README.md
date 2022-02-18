@@ -9,8 +9,11 @@ The directory structure is as follows :
  ┃ ┗ 📜.gitkeep
  ┣ 📂docs
  ┃ ┗ 📜Milestone_1.pdf
+ ┣ 📂plots
+ ┃ ┣ 📜.gitkeep
  ┣ 📂src
- ┃ ┗ 📜lexer.py
+ ┃ ┣ 📜lexer.py
+ ┃ ┣ 📜parser.py
  ┣ 📂tests
  ┃ ┣ 📂Milestone_1
  ┃ ┃ ┣ 📜test1.c
@@ -20,9 +23,17 @@ The directory structure is as follows :
  ┃ ┃ ┣ 📜test5.c
  ┃ ┃ ┣ 📜test6.c
  ┃ ┃ ┗ 📜test7.c
+ ┃ ┗ 📂Milestone_2
+ ┃ ┃ ┣ 📜test1.c
+ ┃ ┃ ┣ 📜test2.c
+ ┃ ┃ ┣ 📜test3.c
+ ┃ ┃ ┣ 📜test4.c
+ ┃ ┃ ┣ 📜test5.c
+ ┃ ┃ ┣ 📜test6.c
+ ┃ ┃ ┗ 📜test7.c
  ┣ 📜Makefile
+ ┣ 📜README.md
  ┣ 📜requirements.txt
- ┗ 📜README.md
 ```
 Install required pip packages using the requirements.txt file
 ```
@@ -39,4 +50,15 @@ $ python3 src/lexer.py test_case_1.c test_case_2.c .... test_case_n.c
 To run lexer on predefined test cases for Milestone 1 use 
 ```
 $ make testM1
+```
+
+To run parser on pre defined test cases, run 
+```
+$ make testM2
+```
+the output of the plots would get generated in the folder named plots.
+
+To clean all the temporary files, run
+```
+$ make clean
 ```
