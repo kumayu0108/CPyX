@@ -1,2 +1,8 @@
 ply
 pydot
+keyring
+sys
+re
+json
+pandas
+copy
