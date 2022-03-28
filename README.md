@@ -1,7 +1,5 @@
 # CPyX
 
-<!-- Add a README file in <TOP>/ with a brief description of your project and the steps to build and run it. -->
-
 The directory structure is as follows : 
 ```
 📦CPyX
@@ -24,6 +22,14 @@ The directory structure is as follows :
  ┃ ┃ ┣ 📜test6.c
  ┃ ┃ ┗ 📜test7.c
  ┃ ┗ 📂Milestone_2
+ ┃ ┃ ┣ 📜test1.c
+ ┃ ┃ ┣ 📜test2.c
+ ┃ ┃ ┣ 📜test3.c
+ ┃ ┃ ┣ 📜test4.c
+ ┃ ┃ ┣ 📜test5.c
+ ┃ ┃ ┣ 📜test6.c
+ ┃ ┃ ┗ 📜test7.c
+ ┃ ┗ 📂Milestone_3
  ┃ ┃ ┣ 📜test1.c
  ┃ ┃ ┣ 📜test2.c
  ┃ ┃ ┣ 📜test3.c
@@ -63,7 +69,7 @@ To run parser on pre defined test cases, run
 ```
 $ make testM2
 ```
-the output of the plots would get generated in the folder named plots.
+output of parse.py would be symbol_table_dump.csv, symbol_table_dump.json and graph1.dot which is the dot file generated that contains the AST.
 
 To clean all the temporary files, run
 ```
