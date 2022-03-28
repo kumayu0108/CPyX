@@ -1703,7 +1703,6 @@ class Parser():
             if(len (p) == 5 and p[3].name == 'ParameterList'):
                 p[0].children = p[3].children
                 p[0].type = self.current_type[-1]
-                print(self.symtable.table, "line 1703")
                 if(p[1].val in self.symtable.table[self.symtable.prevScope[self.symtable.scope]].keys()):
                     print('Compilation error : near- line ' + str(p[1].line_no) + ' function already declared')
                     
