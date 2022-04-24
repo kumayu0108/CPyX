@@ -15,6 +15,13 @@ testM3: src/parser.py
 		python3 src/parser.py tests/Milestone_3/test$$i.c ; \
 	done
 	
+testM6: src/run_compiler.py
+	@echo "Running pre defined test cases for our compiler"
+	@for i in `seq 1 8`; do \
+		python3 src/run_compiler.py tests/Milestone_6/test$$i.c ; \
+		gcc -m32 -no-pie out.asm -lm ; \
+		./a.out > codeOutput.txt ; \
+	done
 plot : graph1.dot
 	@dot -x -Goverlap=scale -Tpng ./graph1.dot > ./plots/graph_out.png
 	
