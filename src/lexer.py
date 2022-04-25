@@ -27,14 +27,9 @@ class lexer():
         'friend'    : 'FRIEND',
         'virtual'   : 'VIRTUAL',
         'class_obj' : 'CLASS_OBJ',
-        # 'main'      : 'MAIN', 
-        #'printf'    : 'PRINTF',
-        #'scanf'     : 'SCANF',
-        #'malloc'    : 'MALLOC',
-        #'calloc'    : 'CALLOC',
-        #'free'      : 'FREE',
-        #'true'      : 'TRUE',
-        #'false'     : 'FALSE'
+        'break'     : 'BREAK',
+        'continue'  : 'CONTINUE',
+        'goto'      : 'GOTO',
     }
 
     tokens = list(reserved.values()) + [
@@ -57,7 +52,6 @@ class lexer():
             'ASSIGNMENT',   # "="
             'NOT',          # "~"
             'NEGATE',       # "!"
-            # 'BACKSLASH',    # "\"          \\EXTRA
             
 
             'LEFT_SHIFT',   # "<<"
@@ -101,8 +95,6 @@ class lexer():
             'TERNARY'       # "?"     //
 
             ]
-    
-    # def __init__(self):
 
     def build(self, **kwargs):
         self.lexer = lex.lex(self)
@@ -157,7 +149,7 @@ class lexer():
     t_DOT = r'\.'
     t_NOT = r'~'
     t_NEGATE = r'!'
-    # t_BACKSLASH = r'\\'
+    t_MODULO=r'%'
     t_COMMA = r','
     t_PTR_OP = r'\->'
 
@@ -171,14 +163,12 @@ class lexer():
 
     @TOKEN(flt)
     def t_FLOAT_NUM(self, t):
-        t.type = 'FLOAT_NUM'
-        t.value = float(t.value)
+        if t.value.startswith('.'):
+            t.value = '0' + t.value
         return t
     
     def t_INT_NUM(self, t):
         r'(([0-9])+)'
-        t.type = 'INT_NUM'
-        t.value = int(t.value)
         return t
     
     def t_CHARACTER(self, t):
@@ -193,7 +183,6 @@ class lexer():
             print(f"Error!!!, Invalid single quote character encountered at line no. {t.lineno}, column no. {x} ")
             t.lexer.skip(1)
             pass
-        
         return t
        
     string_regex = r'(\"(\\.|[^\\"])*\")'
@@ -215,7 +204,7 @@ class lexer():
         pass
 
     def t_BLOCK_COMMENT(self, t):
-        r'/\*(.|\n)*?\*/'   # ? is to identify the closing *
+        r'/\*(.|\n)*?\*/'
         t.lexer.lineno += t.value.count('\n')
         pass
     
@@ -247,16 +236,13 @@ class lexer():
         pass
 
 def output_token(input):
-    # Give the lexer some input
     lexee.lexer.input(input)
-
-    # Tokenize
     print(f"{'token.type':>16} {'token.value':>16} {'token.lineno':>16} {'token.lexpos':>16}")
 
     while True:
         token = lexee.lexer.token()
         if not token: 
-            break      # No more input
+            break
         x = token.lexpos - input.rfind('\n', 0, token.lexpos)
         print(f"{token.type:>16} {token.value:>16} {token.lineno:>16} {x:>16}")
 
