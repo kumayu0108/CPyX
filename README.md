@@ -83,3 +83,7 @@ nasm -f elf32 out.asm
 gcc -m32 -no-pie -lm out.asm 
 ./a.out > output.txt
 
+To run one test case,
+```
+$ bash runOne.sh test_case.c
+```
