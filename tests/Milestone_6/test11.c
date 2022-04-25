@@ -5,7 +5,7 @@ int main()
     printf("Enter the number\n");
     scanf("%d",&number);
 
-    int primes[number+1];
+    int *primes = (int *)malloc(sizeof(int) * number);
 
     //populating array with naturals numbers
     for(i = 2; i<=number; i++)
