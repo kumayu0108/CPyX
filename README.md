@@ -78,7 +78,7 @@ $ make clean
 
 To run our code on c file test_case.c
 ```
-python3 src/main.py test_case.c
+python3 src/run_compiler.py test_case.c
 nasm -f elf32 out.asm
 gcc -m32 -no-pie -lm out.asm 
 ./a.out > output.txt
