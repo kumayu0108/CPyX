@@ -1,5 +1,4 @@
 ply
-pydot
 keyring
 sys
 re
