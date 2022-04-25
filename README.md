@@ -76,13 +76,10 @@ To clean all the temporary files, run
 $ make clean
 ```
 
-To run our code on c files test_case_1.c, test_case_2.c .... test_case_n.c 
+To run our code on c file test_case.c
 ```
-python3 src/run_compiler.py test_case_1.c, test_case_2.c .... test_case_n.c
-gcc -m32 -no-pie out.asm -lm
+python3 src/run_compiler.py test_case.c
+nasm -f elf32 out.asm
+gcc -m32 -no-pie -lm out.asm 
 ./a.out > output.txt
-```
-If you want to run our set of test cases on our compiler:
-```
-$ make testM6
-```
+
