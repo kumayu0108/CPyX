@@ -1,4 +1,4 @@
-# CPyX
+# mkC- : A C compiler implemented in Python for x86 32bit architecture
 
 The directory structure is as follows : 
 ```
