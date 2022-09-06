@@ -1,6 +1,6 @@
 # CPyX
 
-### C toy compiler implemented in Python for x86 32bit architecture
+### C/C++ toy compiler implemented in Python for x86 32bit architecture
 
 The directory structure is as follows : 
 ```
